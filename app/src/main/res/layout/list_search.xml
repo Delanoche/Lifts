@@ -10,6 +10,7 @@
 
     <android.support.v7.widget.AppCompatImageView
         app:srcCompat="@drawable/ic_search"
+        app:tint="@color/white"
         android:layout_gravity="center_vertical"
         android:layout_marginRight="8dp"
         android:layout_width="24dp"

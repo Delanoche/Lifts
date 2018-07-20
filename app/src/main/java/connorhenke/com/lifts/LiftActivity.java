@@ -23,9 +23,11 @@ import java.util.Date;
 import java.util.List;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 
 import connorhenke.com.lifts.viewmodels.Lift;
 import connorhenke.com.lifts.viewmodels.Set;
+import io.reactivex.Scheduler;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.functions.Consumer;
 import io.reactivex.functions.Function;
@@ -35,6 +37,8 @@ import jp.wasabeef.recyclerview.animators.FadeInUpAnimator;
 public class LiftActivity extends AppCompatActivity {
 
     @Inject AppDatabase db;
+    @Inject @Named("io") Scheduler io;
+    @Inject @Named("main") Scheduler main;
 
     private GroupAdapter adapter;
 
@@ -59,8 +63,8 @@ public class LiftActivity extends AppCompatActivity {
 
         final long liftId = getIntent().getLongExtra("LIFT_ID", 0);
         db.liftDao().getLift(liftId)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(io)
+                .observeOn(main)
                 .subscribe(new Consumer<Lift>() {
                     @Override
                     public void accept(Lift lift) throws Exception {
@@ -69,9 +73,9 @@ public class LiftActivity extends AppCompatActivity {
                 });
 
         db.setDao().getSets(liftId)
-                .subscribeOn(Schedulers.io())
-                .observeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(io)
+                .observeOn(io)
+                .observeOn(main)
                 .subscribe(new Consumer<List<Set>>() {
                     @Override
                     public void accept(List<Set> sets) throws Exception {
@@ -85,7 +89,7 @@ public class LiftActivity extends AppCompatActivity {
         final WeightView weightView = findViewById(R.id.lift_weight_plates);
         final TextInputLayout weight = findViewById(R.id.lift_weight_edit_text);
         RxTextView.textChanges(weight.getEditText())
-                .subscribeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(main)
                 .observeOn(Schedulers.computation())
                 .map(new Function<CharSequence, Integer>() {
                     @Override
@@ -98,7 +102,7 @@ public class LiftActivity extends AppCompatActivity {
                         }
                     }
                 })
-                .observeOn(AndroidSchedulers.mainThread())
+                .observeOn(main)
                 .subscribe(new Consumer<Integer>() {
                     @Override
                     public void accept(Integer integer) throws Exception {
@@ -111,7 +115,7 @@ public class LiftActivity extends AppCompatActivity {
         TextView weightUp = findViewById(R.id.lift_weight_up);
 
         RxView.clicks(weightDown)
-                .subscribeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(main)
                 .map(new Function<Object, Integer>() {
                     @Override
                     public Integer apply(Object o) throws Exception {
@@ -123,7 +127,7 @@ public class LiftActivity extends AppCompatActivity {
                             return -1;
                         }
                     }
-                }).observeOn(AndroidSchedulers.mainThread())
+                }).observeOn(main)
                 .subscribe(new Consumer<Integer>() {
                     @Override
                     public void accept(Integer integer) throws Exception {
@@ -131,7 +135,7 @@ public class LiftActivity extends AppCompatActivity {
                 });
 
         RxView.clicks(weightUp)
-                .subscribeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(main)
                 .map(new Function<Object, Integer>() {
                     @Override
                     public Integer apply(Object o) throws Exception {
@@ -147,7 +151,7 @@ public class LiftActivity extends AppCompatActivity {
                             return -1;
                         }
                     }
-                }).observeOn(AndroidSchedulers.mainThread())
+                }).observeOn(main)
                 .subscribe(new Consumer<Integer>() {
                     @Override
                     public void accept(Integer integer) throws Exception {
@@ -159,7 +163,7 @@ public class LiftActivity extends AppCompatActivity {
         final TextView repsUp = findViewById(R.id.lift_reps_up);
 
         RxView.clicks(repsDown)
-                .subscribeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(main)
                 .map(new Function<Object, Integer>() {
                     @Override
                     public Integer apply(Object o) throws Exception {
@@ -171,7 +175,7 @@ public class LiftActivity extends AppCompatActivity {
                             return -1;
                         }
                     }
-                }).observeOn(AndroidSchedulers.mainThread())
+                }).observeOn(main)
                 .subscribe(new Consumer<Integer>() {
                     @Override
                     public void accept(Integer integer) throws Exception {
@@ -179,7 +183,7 @@ public class LiftActivity extends AppCompatActivity {
                 });
 
         RxView.clicks(repsUp)
-                .subscribeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(main)
                 .map(new Function<Object, Integer>() {
                     @Override
                     public Integer apply(Object o) throws Exception {
@@ -195,7 +199,7 @@ public class LiftActivity extends AppCompatActivity {
                             return -1;
                         }
                     }
-                }).observeOn(AndroidSchedulers.mainThread())
+                }).observeOn(main)
                 .subscribe(new Consumer<Integer>() {
                     @Override
                     public void accept(Integer integer) throws Exception {
@@ -204,8 +208,8 @@ public class LiftActivity extends AppCompatActivity {
 
         Button log = findViewById(R.id.lift_log);
         RxView.clicks(log)
-                .subscribeOn(AndroidSchedulers.mainThread())
-                .observeOn(Schedulers.io())
+                .subscribeOn(main)
+                .observeOn(io)
                 .map(new Function<Object, Set>() {
                     @Override
                     public Set apply(Object o) throws Exception {

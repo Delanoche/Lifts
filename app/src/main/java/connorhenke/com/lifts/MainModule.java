@@ -6,6 +6,7 @@ import android.arch.persistence.room.Room;
 import dagger.Module;
 import dagger.Provides;
 import io.reactivex.Scheduler;
+import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 import javax.inject.Named;
 import javax.inject.Singleton;
@@ -36,6 +37,13 @@ public class MainModule {
     @Named("io")
     Scheduler providesIOScheduler() {
         return Schedulers.io();
+    }
+
+    @Provides
+    @Singleton
+    @Named("main")
+    Scheduler providesMainScheduler() {
+        return AndroidSchedulers.mainThread();
     }
 
 }

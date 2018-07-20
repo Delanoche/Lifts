@@ -26,6 +26,12 @@ public interface LiftDao {
     @Query("SELECT * FROM `set` WHERE lift_id = :lid ORDER BY date DESC")
     Flowable<List<Set>> getSets(long lid);
 
+    @Query("SELECT * FROM lift WHERE name = :name")
+    Single<List<Lift>> getLiftByName(String name);
+
     @Insert
     void insertAll(Lift... lifts);
+
+    @Insert
+    long insertWithResponse(Lift lift);
 }
